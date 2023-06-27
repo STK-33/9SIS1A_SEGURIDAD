@@ -1,0 +1,29 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <title>Cifrado AES</title>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+</head>
+<body>
+  <h1>Cifrado AES</h1>
+  <textarea id="inputText" rows="5" cols="50"></textarea><br>
+  <button onclick="encrypt()">Cifrar</button>
+  <button onclick="decrypt()">Descifrar</button>
+  <br>
+  <textarea id="outputText" rows="5" cols="50"></textarea>
+
+  <script>
+    function encrypt() {
+      var inputText = document.getElementById("inputText").value;
+      var encryptedText = CryptoJS.AES.encrypt(inputText, "SecretKey123").toString();
+      document.getElementById("outputText").value = encryptedText;
+    }
+
+    function decrypt() {
+      var encryptedText = document.getElementById("outputText").value;
+      var decryptedText = CryptoJS.AES.decrypt(encryptedText, "SecretKey123").toString(CryptoJS.enc.Utf8);
+      document.getElementById("inputText").value = decryptedText;
+    }
+  </script>
+</body>
+</html>
