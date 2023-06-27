@@ -3,27 +3,129 @@
 <head>
   <title>Cifrado AES</title>
   <script src="https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.0.0/crypto-js.min.js"></script>
+  <style>
+    body {
+      font-family: "Arial", sans-serif;
+      background-color: #F7F7F7;
+      padding: 20px;
+      text-align: center;
+    }
+
+    h1 {
+      color: #333333;
+      margin-bottom: 20px;
+    }
+
+    textarea, select, input[type="text"] {
+      font-size: 16px;
+      padding: 10px;
+      width: 100%;
+      box-sizing: border-box;
+      border: 1px solid #CCCCCC;
+      border-radius: 4px;
+      margin-bottom: 10px;
+    }
+
+    select {
+      font-size: 16px;
+      padding: 6px;
+    }
+
+    label {
+      font-size: 16px;
+      font-weight: bold;
+      color: #333333;
+      display: block;
+      margin-bottom: 5px;
+      text-align: left;
+    }
+
+    button {
+      font-size: 16px;
+      padding: 10px 20px;
+      background-color: #4CAF50;
+      color: #FFFFFF;
+      border: none;
+      border-radius: 4px;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background-color: #45A049;
+    }
+
+    #keyLengthWarning {
+      font-size: 14px;
+      font-style: italic;
+    }
+
+    #outputText {
+      margin-top: 20px;
+    }
+  </style>
 </head>
 <body>
   <h1>Cifrado AES</h1>
   <textarea id="inputText" rows="5" cols="50"></textarea><br>
+  <label for="keySize">Tipo de AES:</label>
+  <select id="keySize" onchange="updateKeyLength()">
+    <option value="128">AES-128</option>
+    <option value="192">AES-192</option>
+    <option value="256">AES-256</option>
+  </select>
+  <br>
+  <label for="key">Llave:</label>
+  <input type="text" id="key" oninput="validateKeyLength()">
+  <span id="keyLengthWarning"></span>
+  <br>
   <button onclick="encrypt()">Cifrar</button>
   <button onclick="decrypt()">Descifrar</button>
   <br>
   <textarea id="outputText" rows="5" cols="50"></textarea>
 
   <script>
+    function updateKeyLength() {
+      var keySizeSelect = document.getElementById("keySize");
+      var selectedKeySize = keySizeSelect.options[keySizeSelect.selectedIndex].value;
+
+      var keyInput = document.getElementById("key");
+      var keyLength = parseInt(selectedKeySize) / 8;
+      keyInput.maxLength = keyLength;
+      validateKeyLength();
+    }
+
+    function validateKeyLength() {
+      var keyInput = document.getElementById("key");
+      var keySizeSelect = document.getElementById("keySize");
+      var selectedKeySize = keySizeSelect.options[keySizeSelect.selectedIndex].value;
+      var expectedLength = parseInt(selectedKeySize) / 8;
+
+      if (keyInput.value.length > expectedLength) {
+        document.getElementById("keyLengthWarning").textContent = "La longitud de la clave debe ser " + expectedLength + " caracteres.";
+        alert("La longitud de la clave debe ser " + expectedLength + " caracteres.");
+      } else {
+        document.getElementById("keyLengthWarning").textContent = "";
+      }
+    }
+
     function encrypt() {
       var inputText = document.getElementById("inputText").value;
-      var encryptedText = CryptoJS.AES.encrypt(inputText, "SecretKey123").toString();
+      var key = document.getElementById("key").value;
+      var encryptedText = CryptoJS.AES.encrypt(inputText, key).toString();
       document.getElementById("outputText").value = encryptedText;
     }
 
     function decrypt() {
       var encryptedText = document.getElementById("outputText").value;
-      var decryptedText = CryptoJS.AES.decrypt(encryptedText, "SecretKey123").toString(CryptoJS.enc.Utf8);
+      var key = document.getElementById("key").value;
+      var decryptedText = CryptoJS.AES.decrypt(encryptedText, key).toString(CryptoJS.enc.Utf8);
       document.getElementById("inputText").value = decryptedText;
     }
+
+    // Al cargar la página, actualiza la longitud de la llave
+    window.onload = function() {
+      updateKeyLength();
+    };
   </script>
 </body>
 </html>
